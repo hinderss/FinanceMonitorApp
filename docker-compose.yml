@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  postgresqldb:
+    restart: always
+    container_name: finance_database
+    image: postgres:13.2-alpine
+    ports:
+      - "5434:5432"
+    environment:
+      - POSTGRES_DB=finance
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  django:
+    restart: always
+    container_name: finance_django
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn finance_monitoring.wsgi:application --bind 0.0.0.0:8000 --reload"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=finance_monitoring.settings
+      - POSTGRES_HOST=postgresqldb
+    depends_on:
+      - postgresqldb
+
+  nginx:
+    restart: always
+    container_name: finance_nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./static:/static
+    depends_on:
+      - django
+
+volumes:
+  pgdata:

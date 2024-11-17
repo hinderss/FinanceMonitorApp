@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block navbar_link %}
+<a class="navbar-brand" href="{% url 'cards' %}">Карты</a>
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="text-center mb-4">Добавить карту</h2>
+        <form method="post" onsubmit="removeSpaces()">
+          {% csrf_token %}
+
+          {% bootstrap_form form layout=layout size=size %}
+
+          <button type="submit" class="btn btn-success w-100">Добавить карту</button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script>
+function formatCardNumber(input) {
+    let value = input.value.replace(/\D/g, '');
+
+    let formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+    input.value = formattedValue;
+}
+
+function removeSpaces() {
+    let input = document.getElementById("id_card_number");
+
+    input.value = input.value.replace(/\s/g, '');
+}
+</script>
+{% endblock %}

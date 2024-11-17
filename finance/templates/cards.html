@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block navbar_link %}
+<a class="navbar-brand" href="{% url 'cards' %}">Карты</a>
+{% endblock %}
+
+{% block navbar_secondary %}
+<a class="nav-link" href="{% url 'payments-and-transfers' %}">Платежи и переводы</a>
+{% endblock %}
+
+{% block content %}
+  <!-- Кнопка "Добавить карту" -->
+  <div class="col-md-8 mx-auto">
+      <div class="row" style="display: flex; justify-content: center;">
+          <div class="col-md-4 mb-4">
+              <a href="{% url 'add-card' %}" class="card text-center" style="border-radius: 10px; padding: 20px; margin: 10px; text-decoration: none; color: inherit;">
+                <span style="font-size: 2rem;">💳</span>
+                <h5 class="card-title mt-2">Добавить карту</h5>
+              </a>
+          </div>
+      </div>
+  </div>
+
+
+
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+  <!-- Блок с добавленными картами -->
+  {% if cards %}
+    <div class="col-md-8 mx-auto">
+      <div class="row" style="display: flex; justify-content: center;">
+        {% for card in cards %}
+          <div class="col-md-4 mb-4">
+            <div class="card position-relative">
+              <div class="card-body">
+                <h5 class="card-title">Карта:</h5>
+                <h5 class="card-title">**** **** **** {{ card.card_number_last4 }}</h5>
+                <p class="card-text">До: {{ card.expiration_date|date:"m/Y" }}</p>
+              </div>
+
+              <!-- Кнопка удаления в правом верхнем углу -->
+              <a href="{% url 'delete-card' card.id %}" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2" title="Удалить карту">
+                <i class="fas fa-trash"></i> <!-- Font Awesome trash icon -->
+              </a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% else %}
+    <div class="col-md-8 mx-auto">
+      <p class="text-center">У вас еще нет добавленных карт.</p>
+    </div>
+  {% endif %}
+
+
+    </div>
+  </div>
+{% endblock %}

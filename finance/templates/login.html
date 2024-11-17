@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block navbar_link %}
+<a class="navbar-brand" href="{% url 'login' %}">Вход</a>
+{% endblock %}
+
+{% block navbar_logout_text %}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="text-center">Авторизация</h2>
+        <form method="post">
+          {% csrf_token %}
+            {% bootstrap_form form layout=layout size=size %}
+
+          <button type="submit" class="btn btn-primary w-100" id="submit-button" disabled>
+            Войти
+          </button>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="{% url 'register' %}">Нет аккаунта? Зарегистрируйтесь</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const phoneField = document.getElementById("id_username");
+    const passwordField = document.getElementById("id_password");
+    const submitButton = document.getElementById("submit-button");
+
+    function toggleSubmitButton() {
+      if (phoneField.value.trim() && passwordField.value.trim()) {
+        submitButton.removeAttribute("disabled");
+      } else {
+        submitButton.setAttribute("disabled", "true");
+      }
+    }
+
+    phoneField.addEventListener("input", toggleSubmitButton);
+    passwordField.addEventListener("input", toggleSubmitButton);
+  </script>
+{% endblock %}

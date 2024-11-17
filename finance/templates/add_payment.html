@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block navbar_link %}
+<a class="navbar-brand" href="{% url 'payments-and-transfers' %}">Платежи и переводы</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="text-center">Создать платёж</h2>
+      <form method="post" id="payment-form">
+        {% csrf_token %}
+        {% bootstrap_form form layout=layout size=size %}
+
+        <button type="button" class="btn btn-primary w-100" id="preview-button">
+          Создать платёж
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmationModalLabel">Подтверждение платежа</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p><span id="payment-description"></span></p>
+        <p><h5><span id="payment-card" class="badge bg-secondary">{}</span></h5></p>
+        <p><strong>Сумма:</strong> <span id="payment-amount"></span></p>
+        <div class="form-check"><input type="checkbox" name="is_favorite" class="form-check-input" id="id_is_favorite_dublicate" checked="">
+          <label class="form-check-label" for="id_is_favorite_dublicate">Избранный платёж</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" class="btn btn-primary" id="confirm-button">Подтвердить платеж</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+  document.getElementById('id_is_favorite_dublicate').addEventListener('change', function() {
+    document.getElementById('id_is_favorite').checked = this.checked;
+  });
+
+  document.getElementById('preview-button').addEventListener('click', function() {
+    // Fetch values from the form and display them in the modal
+    document.getElementById('payment-amount').textContent = document.getElementById('id_amount').value;
+    document.getElementById('payment-description').textContent = document.getElementById('id_description').value;
+
+    const cardSelect = document.getElementById('id_card');
+    const selectedCard = cardSelect.options[cardSelect.selectedIndex].text;
+    document.getElementById('payment-card').textContent = selectedCard;
+
+    var confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    confirmationModal.show();
+  });
+
+  document.getElementById('confirm-button').addEventListener('click', function() {
+    document.getElementById('payment-form').submit();
+  });
+
+  document.getElementById('favorite-button').addEventListener('click', function() {
+    // Code to add the payment to favorites (implement as needed)
+    alert("Платеж добавлен в избранные");
+  });
+</script>
+{% endblock %}

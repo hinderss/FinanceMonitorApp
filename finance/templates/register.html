@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% load django_bootstrap5 %}
+
+{% block navbar_link %}
+<a class="navbar-brand" href="{% url 'register' %}">Регистрация</a>
+{% endblock %}
+
+{% block navbar_logout_text %}
+Вход
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="text-center">Регистрация</h2>
+        <form method="post">
+          {% csrf_token %}
+            {% bootstrap_form form layout=layout size=size %}
+
+          <button type="submit" class="btn btn-primary w-100" id="submit-button">
+            Зарегистрироваться
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
